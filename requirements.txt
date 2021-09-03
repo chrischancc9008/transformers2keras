@@ -1,0 +1,3 @@
+tensorflow==2.2.0
+bert4keras==0.10.7
+transformers==4.10.0
