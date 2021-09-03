@@ -48,10 +48,12 @@ tokenizer = Tokenizer('roberta_vocab.txt', do_lower_case=False)
 
 # Environment Set Up
 
-Install packages,
+Install packages
+
     pip install -r requirement.txt
 
 Export environment variables so that tensorflow.keras will be used by bert4keras
+
     export TF_KERAS=1
 
 # Checking
