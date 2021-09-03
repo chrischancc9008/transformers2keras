@@ -18,11 +18,11 @@ For details, please refer to "Why shouldn't I use transformers?" https://github.
 
     python conversion_test.py
 
-**vocab file**: roberta_vocab.txt which could be used by Tokenizer in bert4keras with a small modification as shown in tokenizer.py
+1. **vocab file**: roberta_vocab.txt which could be used by Tokenizer in bert4keras with a small modification as shown in tokenizer.py
 
-**config file**: roberta_config.json which could be used in build_transformer_model function in bert4keras.
+2. **config file**: roberta_config.json which could be used in build_transformer_model function in bert4keras.
 
-**weight file**: roberta_weights.h5 which could be loaded after getting the keras model.
+3. **weight file**: roberta_weights.h5 which could be loaded after getting the keras model.
 
 
 e.g.,
