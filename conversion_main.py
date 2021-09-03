@@ -12,10 +12,16 @@ from tensorflow.keras import backend as K
 from tokenizer import Tokenizer
 import numpy as np
 from tensorflow.keras.models import Model
+import json
 
 
 WITH_POOL = 'tanh'
 
+# config
+with open('roberta_config.json', 'w') as f:
+    json.dump(roberta_config, f)
+
+# prepare result of hugging face roberta
 hf_tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
 hf_model = TFRobertaModel.from_pretrained('roberta-base')
 text = " Replace me by any text you'd like."
@@ -26,12 +32,13 @@ encoded_input = hf_tokenizer(text, return_tensors='tf')
 hf_embedding_output = hf_roberta_layer.embeddings(encoded_input['input_ids'])
 
 
-# convert dictionary
+# vocab dictionary
 token_dict = copy.deepcopy(hf_tokenizer.get_vocab())
 token_dict = convert_token_dict(token_dict)
 write_list('roberta_vocab.txt', [k for k, _ in sorted(token_dict.items(), key=lambda x: x[1])])
 
 
+# prepare bert4keras roberta
 roberta = build_transformer_model(
     config_path=None,
     checkpoint_path=None,
@@ -42,6 +49,7 @@ roberta = build_transformer_model(
     **roberta_config
 )
 
+# weight mapping
 layer_weight_mapping = {
     # 'Embedding-Token': hf_roberta_layer.embeddings.weight,
     'Embedding-Segment': hf_roberta_layer.embeddings.token_type_embeddings,
@@ -83,3 +91,5 @@ print(f'checking embedding match rate: {compare_2_array(embedding_output, K.eval
 if WITH_POOL:
     print(f'checking pooling  match rate: {compare_2_array(output, K.eval(hf_output.pooler_output))}')
 print(f'checking embedding  match rate: {compare_2_array(last_layer_output, hf_output.last_hidden_state)}')
+
+roberta.save_weights('roberta_weights.h5')

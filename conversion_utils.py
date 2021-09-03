@@ -27,11 +27,10 @@ def convert_token_dict(token_dict):
         if not re.search('^Ġ.*', k) and not re.search('\[.+\]', k):
             ind = token_dict.pop(k)
             if f'##{k}' in token_dict:
-                print(f'unable to convert: {k} {ind}')
+                print(f'unable to convert vocab dict: {k} {ind}')
                 token_dict[k] = ind
             else:
                 token_dict[f'##{k}'] = ind
-    print(len(token_dict))
 
     # replace symbol for complete tokens
     keys = list(token_dict.keys()) 
@@ -39,7 +38,7 @@ def convert_token_dict(token_dict):
         if re.search('^Ġ.*', k):
             ind = token_dict.pop(k)
             if re.sub('^Ġ', '', k) in token_dict:
-                print(f'unable to convert: {k} {ind}')
+                print(f'unable to convert vocab dict: {k} {ind}')
                 token_dict[k] = ind
             else:
                 token_dict[re.sub('^Ġ', '', k)] = ind
@@ -48,7 +47,6 @@ def convert_token_dict(token_dict):
         if ind == 0 and k != '[PAD]':
             token_dict[k] = pad_ind
 
-    print(len(token_dict))
     return token_dict
 
 
@@ -59,7 +57,7 @@ def write_list(filename, a):
 
 def set_transformer_weight(keras_model, hf_encoder_layers):
     for ind, encoder in enumerate(hf_encoder_layers):
-        print(f'setting layer {ind}')
+        print(f'setting transformer layer {ind}')
         self_attention_layer = keras_model.get_layer(f'Transformer-{ind}-MultiHeadSelfAttention')
         param2set = self_attention_layer.count_params()
         att_mapping = [
@@ -69,7 +67,7 @@ def set_transformer_weight(keras_model, hf_encoder_layers):
             (self_attention_layer.o_dense, encoder.attention.dense_output.dense),
         ]
         total_param = [l.count_params() for _, l in att_mapping]
-        print(f'total params assigned: {sum(total_param)} ({param2set})')
+        # print(f'total params assigned: {sum(total_param)} ({param2set})')
         for _keras_layer, _hf_layer in att_mapping:
             weights = _hf_layer.weights
             _keras_layer.set_weights([K.eval(w) for w in weights])
@@ -85,7 +83,7 @@ def set_transformer_weight(keras_model, hf_encoder_layers):
             (feedforward_layer.o_dense, encoder.bert_output.dense)
         ]
         total_param = [l.count_params() for _, l in feedforward_mapping]
-        print(f'total params assigned: {sum(total_param)} ({param2set})')
+        # print(f'total params assigned: {sum(total_param)} ({param2set})')
         for _keras_layer, _hf_layer in feedforward_mapping:
             weights = _hf_layer.weights
             _keras_layer.set_weights([K.eval(w) for w in weights])

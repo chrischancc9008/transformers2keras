@@ -16,7 +16,7 @@ For details, please refer to "Why shouldn't I use transformers?" https://github.
 
 3 files will be provided after running the following codes.
 
-    python conversion_test.py
+    python conversion_main.py
 
 1. **vocab file**: roberta_vocab.txt which could be used by Tokenizer in bert4keras with a small modification as shown in tokenizer.py
 
@@ -33,10 +33,11 @@ from model import Roberta
 from tokenizer import Tokenizer
 
 roberta = build_transformer_model(
-    config_path=roberta_config.json,
+    config_path='roberta_config.json',
     checkpoint_path=None,
     model=Roberta,
     dropout_rate=0.1,
+    with_pool='tanh',
     **roberta_config
 )
 
@@ -55,9 +56,11 @@ Export environment variables so that tensorflow.keras will be used by bert4keras
 
 # Checking
 
-    python conversion_test.py
+    python conversion_main.py
 
-
+match rate, which is the percentage of matrix elements matched of output will be compared. 
 # TODO
 
-Support conversion other models
+1. add conversion options: with/without pool
+
+2. support conversion other models
